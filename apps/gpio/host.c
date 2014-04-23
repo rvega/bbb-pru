@@ -5,6 +5,8 @@
 #include <unistd.h>
 #include <signal.h>
 #include <sys/time.h>
+#include <fcntl.h>
+#include <sys/mman.h>
 
 #include <prussdrv.h>
 #include <pruss_intc_mapping.h>
@@ -26,6 +28,23 @@ int finish = 0;
 
 /////////////////////////////////////////////////////////////////////
 
+void take_over_leds(){
+   int i;
+   FILE* f;
+   char path[128];
+   for(i=0;i<4;i++){
+      sprintf(path, "/sys/devices/ocp.3/gpio-leds.8/leds/beaglebone:green:usr%i/trigger", i);
+      f = fopen(path,"w");
+      if(f==NULL){
+         printf("Led takeover failed (fopen)");
+         exit(1);
+      }
+      fprintf(f, "none");
+      fclose(f);
+   }
+
+   usleep(100000);
+}
 
 void load_device_tree_overlay(){
    // Check if device tree overlay is loaded, load if needed.
@@ -121,6 +140,9 @@ int main(int argc, const char *argv[]){
    // Listen to SIGINT signals (program termination)
    signal(SIGINT, signal_handler);
 
+   // Tell linux not to use the user leds in the board.
+   take_over_leds();
+
    // Load device tree overlay to enable PRU hardware.
    load_device_tree_overlay();
 
@@ -135,8 +157,28 @@ int main(int argc, const char *argv[]){
    // Start input polling thread
    start_thread();
 
+   // Map memory so we can access hardware registers from here. 
+   // Note: control module registers cannot be accesed from
+   // userland (needs privileged mode) so pinmux needs to be set 
+   // either from a device tree overlay or by writing to those 
+   // registers from the PRU (I'm using the later in this examples).
+   int memdev = open("/dev/mem", O_RDWR);
+   // Get pointer to gpio1 registers (start at address 0x4804c000, 
+   // length 0x1000 (1KB). See memory map in manual.
+   volatile void* gpio1 = mmap(0, 0x1000, PROT_READ|PROT_WRITE, MAP_SHARED, memdev, 0x4804c000);
+   if(gpio1 == MAP_FAILED){
+      printf("Could not map gpio1 registers\n");
+      exit(1);
+   }
+   volatile unsigned int* gpio1_dataout = (unsigned int*)(gpio1+0x13c);
+
    while(!finish){
+      // Blink user led 0, it's connected to GPIO1[21]
+      // GPIO1 GPIO_DATAOUT register
       sleep(1);
+      *gpio1_dataout |= 1<<21;
+      sleep(1);
+      *gpio1_dataout &= ~(1<<21);
    }
 
    printf("Disabling PRU.\n");

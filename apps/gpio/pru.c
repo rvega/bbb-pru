@@ -31,12 +31,14 @@ int main(int argc, const char *argv[]){
    // P9_11 pin as an input, with pullup.
    // See BeagleboneBlackP9HeaderTable.pdf from derekmolloy.ie
    HWREG(0x44e10870) = 0x37;
-   /* HWREG(0x44e10870) = 0x3F; */
 
    // P9_13 pin as an input, with pullup.
    // See BeagleboneBlackP9HeaderTable.pdf from derekmolloy.ie
    HWREG(0x44e10874) = 0x37;
-   /* HWREG(0x44e10874) = 0x3F; */
+
+   // GPIO1[21] (User led 0) as an output
+   HWREG(0x44e10854) = 0x0f;
+   
 
    unsigned int value11 = 0;
    unsigned int previous_value11 = 0;

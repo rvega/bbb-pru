@@ -23,6 +23,7 @@ http://www.embeddedrelated.com/showarticle/603.php
 https://github.com/texane/pru_sdk   
 https://github.com/BeaglePilot/PRUSS-C   
 https://github.com/beagleboard/am335x_pru_package   
+https://github.com/VegetableAvenger/BBBIOlib
 http://processors.wiki.ti.com/index.php/PRU_Assembly_Instructions   
 http://processors.wiki.ti.com/index.php/PRU_Assembly_Reference_Guide   
 [AM335x SitaraTM Processors Technical Reference Manual](http://www.ti.com/lit/ug/spruh73k/spruh73k.pdf)   

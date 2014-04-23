@@ -34,6 +34,10 @@
                /* 0x198 0x0f */   /* P9_30 */
                /* 0x1b4 0x0f */   /* P9_41 */
                /* 0x164 0x0f */   /* P9_42 */
+               /* 0x054 0x0f */ /* User LED 0 (GPIO1[21])*/
+               /* 0x058 0x0f */ /* User LED 1 (GPIO1[22])*/
+               /* 0x05c 0x0f */ /* User LED 2 (GPIO1[23])*/
+               /* 0x060 0x0f */ /* User LED 3 (GPIO1[24])*/
 
 
 
