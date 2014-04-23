@@ -1,4 +1,4 @@
-PRU_COMPILER_DIR=../vendors/pru_2.0.0B2
+PRU_COMPILER_DIR=../../vendors/pru_2.0.0B2
 PRU_C_FLAGS=--silicon_version=2 --hardware_mac=on -i$(PRU_COMPILER_DIR)/include -i$(PRU_COMPILER_DIR)/lib 
 PRU_LD_FLAGS=-llibc.a
 
