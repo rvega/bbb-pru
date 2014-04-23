@@ -26,7 +26,7 @@ unsigned int* shared_ram = NULL;
 pthread_t thread;
 int finish = 0;
 SNDFILE* sound_file;
-unsigned int buffer[960000];
+unsigned int buffer[0xFFFFFF]; // 16MB
 unsigned int buffer_count=0;
 
 
@@ -88,10 +88,12 @@ void* threaded_function(void* param){
    /* unsigned long t1=0; */
    /* unsigned long t2=0; */
    unsigned int buffer_size=0;
+   unsigned int buffer_position;
    /* unsigned int first=1; */
    /* times_count=0; */
-   int i;
+   /* int i; */
    /* float sample; */
+   int count = 0;
    while(1){
       // Wait for interrupt from PRU
       prussdrv_pru_wait_event(PRU_EVTOUT_0);
@@ -108,10 +110,13 @@ void* threaded_function(void* param){
       /* first=0; */
 
       // Read number of samples available
-      buffer_size = (unsigned int)shared_ram[0];
+      buffer_size = shared_ram[1];
+      
+      // Read position in RAM
+      buffer_position = shared_ram[0];
 
       // Write samples to buffer
-      memcpy(&(buffer[buffer_count]), &(shared_ram[1]), buffer_size*sizeof(unsigned int));
+      memcpy(&(buffer[buffer_count]), &(shared_ram[buffer_position]), buffer_size*sizeof(unsigned int));
       buffer_count += buffer_size;
       /* int *p = (int *)(&shared_ram[1]); */
       /* sf_write_int(sound_file, &(shared_ram[1]), buffer_size); */
@@ -122,11 +127,14 @@ void* threaded_function(void* param){
          /* printf("sample: %f \n", sample); */
       /* } */
 
-      // Print info
-      printf("Buffer size: %u\n", buffer_size);
-      printf("A value: %u\n", shared_ram[1]);
-      /* printf("A few values: %u %u %u %u\n", shared_ram[1], shared_ram[2], shared_ram[80], shared_ram[120]); */
-
+      if(count%20 == 0){
+         // Print info
+         /* printf("Pos: %u\n", buffer_position); */
+         /* printf("Buffer size: %u\n", buffer_size); */
+         printf("Values: %u %u %u %u %u %u\n", shared_ram[buffer_position], shared_ram[buffer_position+1], shared_ram[buffer_position + 2], shared_ram[buffer_position+3], shared_ram[buffer_position+4], shared_ram[buffer_position+5]);
+         printf("fifo0 count: %u \n", shared_ram[3]);
+      }
+      count++;
    }
 
    return NULL;
@@ -158,8 +166,8 @@ void stop_thread(){
 
 void open_sound_file(){
    SF_INFO info;
-   info.samplerate = 48000;
-   info.channels = 1;
+   info.samplerate = 50000;
+   info.channels = 6;
    info.format = SF_FORMAT_WAV | SF_FORMAT_FLOAT;
    if(!sf_format_check(&info)){
       printf("Invalid soundfile format\n");
@@ -173,11 +181,20 @@ void open_sound_file(){
 }
 
 void close_sound_file(){
-   int i;
-   float sample;
-   for(i=0; i<buffer_count; i++){
-      sample = ( (float)buffer[i]/(float)0x7ff ) - 1;
-      sf_write_float(sound_file, &sample, 1);
+   unsigned int i;
+   float samples[6];
+   printf("Final buffer_count: %u \n", buffer_count);
+   for(i=0; i<buffer_count; i=i+6){
+      samples[0] = ( (float)buffer[i]/(float)0x7ff ) - 1;
+      samples[1] = ( (float)buffer[i+1]/(float)0x7ff ) - 1;
+      samples[2] = ( (float)buffer[i+2]/(float)0x7ff ) - 1;
+      samples[3] = ( (float)buffer[i+3]/(float)0x7ff ) - 1;
+      samples[4] = ( (float)buffer[i+4]/(float)0x7ff ) - 1;
+      samples[5] = ( (float)buffer[i+5]/(float)0x7ff ) - 1;
+      if(6!=sf_write_float(sound_file, samples, 6)){
+         printf("%s \n", sf_strerror(sound_file));
+         break;
+      }
    }
    sf_close(sound_file);
 }
@@ -201,7 +218,7 @@ int main(int argc, const char *argv[]){
    start_thread();
 
    /* while(!finish){ */
-   sleep(3);
+   sleep(5);
    /* } */
 
    prussdrv_pru_disable(PRU_NUM);
