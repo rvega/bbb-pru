@@ -1,0 +1,9 @@
+*.bin
+*.swo
+*.o
+*.elf
+*.map
+*.obj
+*~ 
+host
+out.wav
