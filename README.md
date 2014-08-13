@@ -32,9 +32,9 @@ https://github.com/BeaglePilot/PRUSS-C
 
 ## Objectives
 
-1. How to compile and run assembly code for the PRU? 
-2. How to communicate between a host application (linux app) and the code running in the PRU? Interrupt based, please.
-3. How to do all of this stuff in C instead of assembly?  
+1. How to compile and run assembly code for the PRU?  [DONE]
+2. How to communicate between a host application (linux app) and the code running in the PRU? Interrupt based, please. [PARTIAL]
+3. How to do all of this stuff in C instead of assembly?  [DONE]
 4. How to use GPIO and ADCs from the PRU code? 
 5. Other hardware we might need, timers maybe? 
 
