@@ -1,6 +1,6 @@
 #BBB-PRU
 
-This is all for figuring out how to program the PRU units in the Beagle Bone Black.
+This is an example program to figure out how to program the PRU units in the Beagle Bone Black.
 
 ## 3rd party tools that are needed.
 
@@ -18,25 +18,24 @@ Look at the app-c example.
 
 ## Links:
 
-https://delicious.com/rvega/beaglebone
-
-https://github.com/beagleboard/am335x_pru_package
-
 http://www.embeddedrelated.com/showarticle/586.php
-
 http://www.embeddedrelated.com/showarticle/603.php
-
 https://github.com/texane/pru_sdk
-
 https://github.com/BeaglePilot/PRUSS-C
+https://github.com/beagleboard/am335x_pru_package
+http://processors.wiki.ti.com/index.php/PRU_Assembly_Instructions
+http://processors.wiki.ti.com/index.php/PRU_Assembly_Reference_Guide
+[AM335x SitaraTM Processors Technical Reference Manual](http://www.ti.com/lit/ug/spruh73k/spruh73k.pdf)
+
 
 ## Objectives
 
 1. How to compile and run assembly code for the PRU?  [DONE]
-2. How to communicate between a host application (linux app) and the code running in the PRU? Interrupt based, please. [PARTIAL]
+2. How to communicate between a host application (linux app) and the code running in the PRU? Interrupt based, please. [DONE]
 3. How to do all of this stuff in C instead of assembly?  [DONE]
-4. How to use GPIO and ADCs from the PRU code? 
-5. Other hardware we might need, timers maybe? 
+4. How to use GPIOs?
+5. ADCs? 
+5. Hardware Timers?
 
 ## License
 
