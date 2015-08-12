@@ -2,6 +2,8 @@
 
 This is an example program to figure out how to program the PRU units in the Beagle Bone Black.
 
+**DEPRECATION NOTICE:** The code in [this repo](https://github.com/outer-space-sounds/beaglebone-pruio/) is more up-to-date and probably more useful.
+
 ## 3rd party tools that are needed.
 
 The vendors/am335x_pru_package directory includes a driver and assembler that can be used to generate and load binaries to be ran on the PRUs. The vendors/install.sh script takes care of compiling and installing it.
